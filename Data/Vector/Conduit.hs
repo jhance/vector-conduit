@@ -2,7 +2,7 @@
 module Data.Vector.Conduit
     (
     sourceVector,
-    sourceMVector
+    sourceMVector,
     consumeVector,
     consumeMVector
     )
