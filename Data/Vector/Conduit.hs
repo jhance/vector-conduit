@@ -4,9 +4,9 @@ module Data.Vector.Conduit
     sourceVector,
     sourceMVector,
     consumeVector,
-    consumeVectorN,
     consumeMVector,
-    consumeMVectorN,
+    takeVector,
+    takeMVector,
     thawConduit,
     freezeConduit
     )
@@ -53,9 +53,9 @@ consumeVector = sinkState (Nothing, 0) push close
 
 -- | Consumes the first n values from a source and returns as an immutable
 -- vector.
-takeVectorN :: (PrimMonad m, Resource m, V.Vector v a)
-               => Int -> Sink a m (v a)
-takeVectorN n = sinkState (Nothing, 0) push close
+takeVector :: (PrimMonad m, Resource m, V.Vector v a)
+              => Int -> Sink a m (v a)
+takeVector n = sinkState (Nothing, 0) push close
     where push (v, index) x = do
             v' <- case v of
                     Nothing -> lift $ M.new n
