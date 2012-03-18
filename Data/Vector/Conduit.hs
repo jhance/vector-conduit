@@ -53,9 +53,9 @@ consumeVector = sinkState (Nothing, 0) push close
 
 -- | Consumes the first n values from a source and returns as an immutable
 -- vector.
-consumeVectorN :: (PrimMonad m, Resource m, V.Vector v a)
-                  => Int -> Sink a m (v a)
-consumeVectorN n = sinkState (Nothing, 0) push close
+takeVectorN :: (PrimMonad m, Resource m, V.Vector v a)
+               => Int -> Sink a m (v a)
+takeVectorN n = sinkState (Nothing, 0) push close
     where push (v, index) x = do
             v' <- case v of
                     Nothing -> lift $ M.new n
@@ -86,9 +86,9 @@ consumeMVector = sinkState (Nothing, 0) push close
 
 -- | Consumes the first n values from the stream and returns as a
 -- mutable vector.
-consumeMVectorN :: (PrimMonad m, Resource m, M.MVector v a)
-                   => Int -> Sink a m (v (PrimState m) a)
-consumeMVectorN n = sinkState (Nothing, 0) push close
+takeMVector :: (PrimMonad m, Resource m, M.MVector v a)
+               => Int -> Sink a m (v (PrimState m) a)
+takeMVector n = sinkState (Nothing, 0) push close
     where push (v, index) x =
             do v' <- case v of
                         Nothing -> lift $ M.new n
