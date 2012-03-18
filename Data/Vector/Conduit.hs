@@ -3,6 +3,8 @@ module Data.Vector.Conduit
     (
     sourceVector,
     sourceMVector
+    consumeVector,
+    consumeMVector
     )
 where
 
