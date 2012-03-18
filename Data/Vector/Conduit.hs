@@ -44,8 +44,24 @@ consumeVector = sinkState (Nothing, 0) push close
                                  lift $ M.write v'' index x
                                  return $ StateProcessing (Just v'', index + 1)
           close (Nothing, index) = return $ V.fromList []
-          close (Just v, index) = do let v' = M.take index v
-                                     lift $ V.unsafeFreeze v'
+          close (Just v, index) = lift . V.unsafeFreeze $ M.take index v
+
+-- | Consumes the first n values from a source and returns as an immutable
+-- vector.
+consumeVectorN :: (PrimMonad m, Resource m, V.Vector v a)
+                  => Int -> Sink a m (v a)
+consumeVectorN n = sinkState (Nothing, 0) push close
+    where push (v, index) x = do
+            v' <- case v of
+                    Nothing -> lift $ M.new n
+                    Just vec -> return vec
+            if index >= n
+                then do v'' <- lift $ V.unsafeFreeze v'
+                        return $ StateDone Nothing v''
+                else do lift $ M.write v' index x
+                        return $ StateProcessing (Just v', index + 1)
+          close (Nothing, index) = return $ V.fromList []
+          close (Just v, index) = lift $ V.unsafeFreeze v
 
 -- | Consumes all values from the stream and returns as a mutable vector.
 consumeMVector :: (PrimMonad m, Resource m, M.MVector v a)
@@ -62,3 +78,19 @@ consumeMVector = sinkState (Nothing, 0) push close
                                  return $ StateProcessing (Just v'', index + 1)
           close (Nothing, index) = lift $ M.new 0
           close (Just v, index) = return $ M.take index v
+
+-- | Consumes the first n values from the stream and returns as a
+-- mutable vector.
+consumeMVectorN :: (PrimMonad m, Resource m, M.MVector v a)
+                   => Int -> Sink a m (v (PrimState m) a)
+consumeMVectorN n = sinkState (Nothing, 0) push close
+    where push (v, index) x =
+            do v' <- case v of
+                        Nothing -> lift $ M.new n
+                        Just vec -> return vec
+               if index >= n
+                    then return $ StateDone Nothing v'
+                    else do lift $ M.write v' index x
+                            return $ StateProcessing (Just v', index + 1)
+          close (Nothing, index) = lift $ M.new 0
+          close (Just v, index) = return v

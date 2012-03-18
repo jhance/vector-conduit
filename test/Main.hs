@@ -23,7 +23,7 @@ testInverse2 l = runST $ do let v = V.fromList l
 
 tests :: [F.Test]
 tests = [testProperty "Inverse" testInverse,
-         testProperty "Invers2" testInverse2]
+         testProperty "Inverse2" testInverse2]
 
 main :: IO ()
 main = defaultMain tests
