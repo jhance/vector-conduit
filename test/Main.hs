@@ -17,8 +17,7 @@ testInverse l = runST $ do let v = V.fromList l
 
 testInverse2 :: [Int] -> Bool
 testInverse2 l = runST $ do let v = V.fromList l
-                            sink <- consumeMVector
-                            v' <- runResourceT $ sourceVector v $$ sink
+                            v' <- runResourceT $ sourceVector v $$ consumeMVector
                             v'' <- V.unsafeFreeze v'
                             return $ v == v''
 

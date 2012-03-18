@@ -40,13 +40,16 @@ consumeVector = sinkState D.empty push close
 
 -- | Consume all values from the stream and return as a mutable vector.
 consumeMVector :: (PrimMonad m, Resource m, M.MVector v a)
-                  => m (Sink a m (v (PrimState m) a))
-consumeMVector = do vec <- M.new 10
-                    return $ sinkState (vec, 0) push close
-    where push (v, index) x = do let len = M.length v
-                                 v' <- if index >= len
-                                    then lift $ M.grow v len
-                                    else return v
-                                 lift $ M.write v' index x
-                                 return $ StateProcessing (v', index + 1)
-          close (v, index) = return $ M.take index v
+                  => Sink a m (v (PrimState m) a)
+consumeMVector = sinkState (Nothing, 0) push close
+    where push (v, index) x = do v' <- case v of
+                                        Nothing -> lift $ M.new 10
+                                        Just vec -> return vec
+                                 let len = M.length v'
+                                 v'' <- if index >= len
+                                            then lift $ M.grow v' len
+                                            else return v'
+                                 lift $ M.write v'' index x
+                                 return $ StateProcessing (Just v'', index + 1)
+          close (Nothing, index) = lift $ M.new 0
+          close (Just v, index) = return $ M.take index v
