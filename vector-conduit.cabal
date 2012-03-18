@@ -1,5 +1,5 @@
 name:                vector-conduit
-version:             0.1.0.0
+version:             0.1.0.1
 synopsis:            Conduit utilities for vectors
 description:         Provides sources and sinks for vectors.
 license:             GPL-3
