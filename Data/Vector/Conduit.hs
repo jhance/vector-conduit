@@ -4,7 +4,11 @@ module Data.Vector.Conduit
     sourceVector,
     sourceMVector,
     consumeVector,
-    consumeMVector
+    consumeVectorN,
+    consumeMVector,
+    consumeMVectorN,
+    thawConduit,
+    freezeConduit
     )
 where
 
@@ -12,6 +16,7 @@ import Control.Monad.Primitive
 import Control.Monad.ST.Safe
 import Control.Monad.Trans.Class
 import Data.Conduit
+import qualified Data.Conduit.List as L
 import qualified Data.Vector.Generic as V
 import qualified Data.Vector.Generic.Mutable as M
 
@@ -94,3 +99,13 @@ consumeMVectorN n = sinkState (Nothing, 0) push close
                             return $ StateProcessing (Just v', index + 1)
           close (Nothing, index) = lift $ M.new 0
           close (Just v, index) = return v
+
+-- | Conduit which thaws immutable vectors into mutable vectors
+thawConduit :: (PrimMonad m, Resource m, V.Vector v a)
+                => Conduit (v a) m (V.Mutable v (PrimState m) a)
+thawConduit = L.mapM V.unsafeThaw
+
+-- | Conduit which freezes mutable vectors into immutable vectors
+freezeConduit :: (PrimMonad m, Resource m, V.Vector v a)
+                 => Conduit (V.Mutable v (PrimState m) a) m (v a)
+freezeConduit = L.mapM V.unsafeFreeze
