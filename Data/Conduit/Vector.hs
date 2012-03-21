@@ -1,5 +1,4 @@
-{-# LANGUAGE Rank2Types, ImpredicativeTypes, FlexibleContexts #-}
-module Data.Vector.Conduit
+module Data.Conduit.Vector
     (
     sourceVector,
     sourceMVector,
