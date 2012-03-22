@@ -21,18 +21,18 @@ import qualified Data.Vector.Generic.Mutable as M
 
 -- | Use an immutable vector as a source.
 sourceVector :: (Monad m, V.Vector v a) => v a -> Source m a
-sourceVector v = sourceState 0 f
-    where f index | index == V.length v = return StateClosed
-                  | otherwise = return $ StateOpen (index + 1) (v V.! index)
+sourceVector vec = sourceState vec f
+    where f v | V.null v = return StateClosed
+              | otherwise = return $ StateOpen (V.tail v) (V.head v)
 
 -- | Use a mutable vector as a source in the ST or IO monad.
 sourceMVector :: (PrimMonad m, M.MVector v a)
                  => v (PrimState m) a
                  -> Source m a
-sourceMVector v = sourceState 0 f
-    where f index | index == M.length v = return StateClosed
-                  | otherwise = do x <- M.read v index
-                                   return $ StateOpen (index + 1) x
+sourceMVector vec = sourceState vec f
+    where f v | M.null v = return StateClosed
+              | otherwise = do x <- M.read v 0
+                               return $ StateOpen (M.tail v) x
 
 -- | Consumes all values from the stream and return as an immutable vector.
 -- Due to the way it operates, it requires the ST monad at the minimum,
