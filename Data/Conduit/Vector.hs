@@ -18,21 +18,25 @@ import Data.Conduit
 import qualified Data.Conduit.List as L
 import qualified Data.Vector.Generic as V
 import qualified Data.Vector.Generic.Mutable as M
+import qualified Data.Vector.Fusion.Stream as S
+import qualified Data.Vector.Fusion.Stream.Monadic as SM
 
 -- | Use an immutable vector as a source.
 sourceVector :: (Monad m, V.Vector v a) => v a -> Source m a
-sourceVector vec = sourceState vec f
-    where f v | V.null v = return StateClosed
-              | otherwise = return $ StateOpen (V.tail v) (V.head v)
+sourceVector vec = sourceState (V.stream vec) f
+    where f stream | S.null stream = return StateClosed
+                   | otherwise = return $ StateOpen (S.tail stream) (S.head stream)
 
 -- | Use a mutable vector as a source in the ST or IO monad.
 sourceMVector :: (PrimMonad m, M.MVector v a)
                  => v (PrimState m) a
                  -> Source m a
-sourceMVector vec = sourceState vec f
-    where f v | M.null v = return StateClosed
-              | otherwise = do x <- M.read v 0
-                               return $ StateOpen (M.tail v) x
+sourceMVector vec = sourceState (M.mstream vec) f
+    where f stream = do isNull <- SM.null stream 
+                        if isNull
+                            then return StateClosed
+                            else do x <- SM.head stream
+                                    return $ StateOpen (SM.tail stream) x
 
 -- | Consumes all values from the stream and return as an immutable vector.
 -- Due to the way it operates, it requires the ST monad at the minimum,
