@@ -1,6 +1,7 @@
 module Main (main)
 where
 
+import Control.Monad.Primitive
 import Control.Monad.ST
 import Data.Conduit
 import qualified Data.Conduit.List as CL
@@ -56,16 +57,48 @@ testSourceMVector = testSourceMVector' [1, 2, 6, 3]
 testSourceMVectorEmpty :: IO ()
 testSourceMVectorEmpty = testSourceMVector' []
 
+testConsumeVector' :: V.Vector Int -> IO ()
+testConsumeVector' v = do let l = V.toList v
+                          v' <- CL.sourceList l $$ consumeVector
+                          assertEqual "consumed vector" v v'
+
+testConsumeVector :: IO ()
+testConsumeVector = testConsumeVector' (V.fromList [1, 2, 6, 3])
+
+testConsumeVectorEmpty :: IO ()
+testConsumeVectorEmpty = testConsumeVector' V.empty
+
+testConsumeMVector' :: M.MVector (PrimState IO) Int -> IO ()
+testConsumeMVector' v = do i <- V.freeze v
+                           let l = V.toList i
+                           v' <- CL.sourceList l $$ consumeMVector
+                           i' <- V.unsafeFreeze v'
+                           assertEqual "consumed vector" i i'
+
+testConsumeMVector :: IO ()
+testConsumeMVector = do m <- V.unsafeThaw . V.fromList $ [1, 2, 6, 3]
+                        testConsumeMVector' m
+
+testConsumeMVectorEmpty :: IO ()
+testConsumeMVectorEmpty = do m <- V.unsafeThaw V.empty
+                             testConsumeMVector' m
+
 tests :: [F.Test]
 tests = [F.testGroup "Properties"
             [testProperty "Inverse" testInverse,
              testProperty "Inverse2" testInverse2,
-             testProperty "Inverse3" testInverse3],
+             testProperty "Inverse3" testInverse
+             ],
          F.testGroup "Cases" [
              testCase "sourceVector" testSourceVector,
              testCase "sourceVector (empty)" testSourceVectorEmpty,
              testCase "sourceMVector" testSourceMVector,
-             testCase "sourceMVector (empty)" testSourceMVectorEmpty]
+             testCase "sourceMVector (empty)" testSourceMVectorEmpty,
+             testCase "consumeVector" testConsumeVector,
+             testCase "consumeVector (empty)" testConsumeVectorEmpty,
+             testCase "consumeMVector" testConsumeMVector,
+             testCase "consumeMVector (empty)" testConsumeMVectorEmpty
+             ]
          ]
 
 main :: IO ()
