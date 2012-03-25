@@ -87,7 +87,7 @@ tests :: [F.Test]
 tests = [F.testGroup "Properties"
             [testProperty "Inverse" testInverse,
              testProperty "Inverse2" testInverse2,
-             testProperty "Inverse3" testInverse
+             testProperty "Inverse3" testInverse3
              ],
          F.testGroup "Cases" [
              testCase "sourceVector" testSourceVector,
