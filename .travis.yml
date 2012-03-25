@@ -1,6 +1,7 @@
 language: haskell
 install:
     - cabal update
+    - cabal install
     - cabal install test-framework test-framework-hunit test-framework-quickcheck2
     - cabal install --enable-tests
 script: ./dist/build/vector-conduit-tests/vector-conduit-tests
