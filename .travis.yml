@@ -2,7 +2,7 @@ language: haskell
 before_script:
     - cabal update
     - cabal install test-framework test-framework-hunit test-framework-quickcheck2
-    - cabal install
+    - cabal install --enable-tests
 script: ./dist/build/vector-conduit-tests/vector-conduit-tests
 notifications:
     email: false
