@@ -4,6 +4,6 @@ install:
     - cabal install
     - cabal install test-framework test-framework-hunit test-framework-quickcheck2
     - cabal install --enable-tests
-script: ./dist/build/vector-conduit-tests/vector-conduit-tests
+script: ./dist/build/vector-conduit-tests/vector-conduit-tests --plain -a 1000
 notifications:
     email: false
