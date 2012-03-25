@@ -3,7 +3,6 @@ version:             0.3.0.0
 synopsis:            Conduit utilities for vectors
 description:         Provides sources and sinks for vectors.
 license:             MIT
-license-file:        LICENSE
 author:              Jared Hance
 maintainer:          jaredhance@gmail.com
 -- copyright:           
