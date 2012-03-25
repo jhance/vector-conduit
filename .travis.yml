@@ -1,9 +1,4 @@
 language: haskell
-script:
-    - cabal update
-    - cabal install
-    - cabal configure --enable-tests
-    - cabal build
-    - ./dist/build/vector-conduit-tests/vector-conduit-tests
+script: ./dist/build/vector-conduit-tests/vector-conduit-tests
 notifications:
     email: false
