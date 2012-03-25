@@ -12,7 +12,7 @@ module Data.Conduit.Vector
 where
 
 import Control.Monad.Primitive
-import Control.Monad.ST.Safe
+import Control.Monad.ST
 import Control.Monad.Trans.Class
 import Data.Conduit
 import qualified Data.Conduit.List as L
