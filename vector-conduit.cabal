@@ -15,7 +15,7 @@ library
     Data.Conduit.Vector
   build-depends:
     base >= 4.0 && < 5.0,
-    conduit >= 0.3 && < 0.4,
+    conduit >= 0.4 && < 0.5,
     primitive >= 0.4 && < 0.5,
     vector >= 0.9 && < 0.10
 
@@ -26,7 +26,7 @@ test-suite vector-conduit-tests
   build-depends:
     vector-conduit,
     base >= 4.0 && < 5.0,
-    conduit >= 0.3 && < 0.4,
+    conduit >= 0.4 && < 0.5,
     primitive >= 0.4 && < 0.5,
     test-framework >= 0.6 && < 0.7,
     test-framework-hunit >= 0.2 && < 0.3,
