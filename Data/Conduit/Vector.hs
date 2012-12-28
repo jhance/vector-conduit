@@ -15,6 +15,7 @@ import Control.Monad.Primitive
 import Control.Monad.ST
 import Data.Conduit
 import qualified Data.Conduit.List as L
+import Data.Conduit.Util
 import qualified Data.Vector.Generic as V
 import qualified Data.Vector.Generic.Mutable as M
 import qualified Data.Vector.Fusion.Stream as S
