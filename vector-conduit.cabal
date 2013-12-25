@@ -17,7 +17,8 @@ library
     base >= 4.0 && < 5.0,
     conduit >= 0.5,
     primitive >= 0.4,
-    vector >= 0.9 
+    vector >= 0.9,
+    mtl >= 1.0
 
 test-suite vector-conduit-tests
   type: exitcode-stdio-1.0
@@ -26,14 +27,14 @@ test-suite vector-conduit-tests
   build-depends:
     vector-conduit,
     base >= 4.0 && < 5.0,
-    conduit >= 0.4 && < 0.5,
-    primitive >= 0.4 && < 0.5,
-    test-framework >= 0.6 && < 0.7,
-    test-framework-hunit >= 0.2 && < 0.3,
-    test-framework-quickcheck2 >= 0.2 && < 0.3,
-    QuickCheck >= 2.4 && < 2.5,
+    conduit >= 0.5,
+    primitive >= 0.4,
+    test-framework >= 0.6,
+    test-framework-hunit >= 0.2,
+    test-framework-quickcheck2 >= 0.2,
+    QuickCheck >= 2.4,
     HUnit >= 1.2 && < 1.3,
-    vector >= 0.9 && < 0.10
+    vector >= 0.9
 
 source-repository head
   type: git
